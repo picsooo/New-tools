@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="icon" href="https://www.groupe-ntb.com/wp-content/uploads/2022/04/ntb-icon.png">
+<script>try{var v=new URLSearchParams(location.search).get('v')||JSON.parse(localStorage.getItem('ntb_v')||'"a"');document.documentElement.dataset.v=v}catch(e){document.documentElement.dataset.v='a'}</script>
+<title>NTB — New Tools Bey · Outillage professionnel, peinture et quincaillerie</title>
+<meta name="description" content="NTB, fournisseur et distributeur d'outillage professionnel, de peinture et de quincaillerie à El Hamiz, Alger. Plus de 20 ans d'expertise.">
+</head><body>
+<div id="hdr"></div>
+<main id="app"></main>
+<div id="ftr"></div>
+<script src="data.js"></script><script src="core.js"></script>
+<script>
+const feat=['erh020','vbc600','eco200','cd325','bey315','beyp04','colle-bois','cap01'];
+function ways(){return `<div class="duo">
+ <div class="way rv${MODE==='shop'?' cur':''}">${MODE==='shop'?'<span class="cur-l">Version affichée</span>':''}<h3>Boutique en ligne</h3><p style="color:var(--mut)">Vos clients commandent et paient directement sur le site.</p>
+  <ul><li>${ICO.check}Panier, suivi de commande et compte client</li><li>${ICO.check}Paiement par carte CIB ou Edahabia, ou à la livraison</li><li>${ICO.check}Livraison à domicile ou retrait au magasin</li></ul>
+  <div class="pay"><span class="chipc">CIB</span><span class="chipc">Edahabia</span><span class="chipc">Paiement à la livraison</span></div>
+  <div><a class="btn" href="catalogue.html?mode=shop">${ICO.cart} Voir la démo e-commerce</a></div></div>
+ <div class="way rv${MODE==='devis'?' cur':''}">${MODE==='devis'?'<span class="cur-l">Version affichée</span>':''}<h3>Catalogue + demande de devis</h3><p style="color:var(--mut)">Le site présente les références ; les professionnels demandent un prix.</p>
+  <ul><li>${ICO.check}Fiches produits détaillées sans affichage des prix</li><li>${ICO.check}Liste de devis multi-produits, avec quantités</li><li>${ICO.check}Réponse commerciale par téléphone ou email</li></ul>
+  <div class="pay"><span class="chipc">Entreprises</span><span class="chipc">Revendeurs</span><span class="chipc">Chantiers</span></div>
+  <div><a class="btn dark" href="catalogue.html?mode=devis">${ICO.doc} Voir la démo devis</a></div></div></div>`}
+function contact(){return `<div class="contact">
+ <div class="cbox rv"><h2 style="font-size:clamp(28px,3.4vw,46px);margin-bottom:12px">Passez nous voir à El Hamiz.</h2>
+  <a class="cline" href="${NTB.map}" target="_blank" rel="noopener">${ICO.pin}<span><b>${NTB.addr}</b><small>Magasin et retrait des commandes</small></span></a>
+  <a class="cline" href="${NTB.tel}">${ICO.phone}<span><b>${NTB.phone}</b><small>Service commercial</small></span></a>
+  <a class="cline" href="mailto:${NTB.email}">${ICO.mail}<span><b>${NTB.email}</b><small>Devis et comptes professionnels</small></span></a>
+  <a class="cline" href="${NTB.wa}" target="_blank" rel="noopener">${ICO.wa}<span><b>WhatsApp</b><small>Réponse rapide sur une référence</small></span></a></div>
+ <div class="mapcard rv"><span class="pinx"></span><a class="btn" href="${NTB.map}" target="_blank" rel="noopener">${ICO.pin} Itinéraire vers NTB</a></div></div>`}
+function homeA(){return `
+<section class="a-hero"><div class="wrap a-hg">
+ <div><h1>Outillage professionnel, peinture et quincaillerie.</h1>
+  <p class="lead">Fournisseur et distributeur à El Hamiz depuis plus de 20 ans. Trouvez la bonne référence, ${MODE==='shop'?'commandez en ligne':'demandez votre devis'} et faites-vous livrer.</p>
+  <form class="bigsearch" action="catalogue.html"><input name="q" placeholder="Référence, produit ou marque…" aria-label="Rechercher"><button>Rechercher</button></form>
+  <div class="quick"><a href="catalogue.html?q=ORCA">ORCA</a><a href="catalogue.html?q=BEY">Aérosols BEY</a><a href="catalogue.html?q=perforateur">Perforateur</a><a href="catalogue.html?q=souder">Soudure</a><a href="catalogue.html?c=securite">Sécurité</a></div>
+  <div class="spec"><div><b>${TOTAL_REF.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g,' ')}</b><span>références</span></div><div><b>9</b><span>familles</span></div><div><b>+20</b><span>ans d'expertise</span></div><div><b>58</b><span>wilayas livrées</span></div></div></div>
+ <div><div class="slider" id="sl">${NTB.banners.map((b,i)=>`<img src="${b}" alt="" class="${i?'':'on'}" referrerpolicy="no-referrer" onerror="this.remove()">`).join('')}<div class="dots">${NTB.banners.map((b,i)=>`<button class="${i?'':'on'}" aria-label="Visuel ${i+1}"></button>`).join('')}</div></div><div class="ticks"></div></div>
+</div></section>
+<section id="familles"><div class="wrap"><div class="shead rv"><h2>Neuf familles, une seule adresse.</h2><p>Du perforateur au disque à tronçonner, de l'aérosol à la serrure : tout ce qu'il faut pour l'atelier et le chantier.</p></div>
+ <div class="fam rv">${CATS.map(c=>`<a href="catalogue.html?c=${c.id}">${imgTag(c.img,c.n)}<div><h3>${c.n}</h3><p>${c.d}</p><p class="mono">${c.c} réf. →</p></div></a>`).join('')}</div></div></section>
+<section style="padding-top:0"><div class="wrap"><div class="shead rv"><h2>Sélection du moment.</h2><a class="btn ghost" href="catalogue.html">Tout le catalogue →</a></div>
+ <div class="tabs rv" id="tabs"><button class="on" data-t="all">Tout</button><button data-t="powertools">Outillage électrique</button><button data-t="peinture">Peinture</button><button data-t="securite">Sécurité</button></div>
+ <div class="grid" id="sel"></div></div></section>
+<div class="wrap"><div class="brands rv">${BRANDS.map(b=>`<span>${b}</span>`).join('')}</div></div>
+<section id="pro"><div class="wrap"><div class="shead rv"><h2>Deux façons de travailler avec NTB.</h2><p>La maquette montre les deux formules. Utilisez le sélecteur en bas de l'écran pour passer de l'une à l'autre.</p></div>${ways()}</div></section>
+<section id="contact" style="padding-top:0"><div class="wrap">${contact()}</div></section>`}
+function homeB(){const hp=byId('vbc600');return `
+<section class="b-hero"><div class="wrap b-hg">
+ <div><h1><span>Outiller</span><span class="o">ceux qui</span><span>construisent.</span></h1>
+  <p class="lead">NTB — New Tools Bey. Outillage professionnel, peinture et quincaillerie, sélectionnés depuis plus de 20 ans pour les artisans, les ateliers et les chantiers.</p>
+  <div class="b-acts"><a class="btn" href="catalogue.html">Explorer le catalogue →</a><a class="btn ghost" href="produit.html?id=erh020"><span class="pst" style="font-size:14px"><i></i></span>Voir le perforateur ERH020</a></div></div>
+ <div class="stage"><div class="ring"></div><div class="disc"></div>${bigTag(byId('erh020'))}
+  <span class="call c1"><b>20 V</b>sans fil</span><span class="call c2"><b>26 mm</b>béton</span><span class="call c3 l"><b>4.0 Ah</b>Li-ion</span></div>
+</div><div class="ruler"><div class="rt"></div><span class="rl">${TOTAL_REF.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g,' ')} références · El Hamiz, Alger</span></div></section>
+<div class="mq" aria-hidden="true"><div>${[...BRANDS,...BRANDS,...BRANDS,...BRANDS].map(b=>`<span>${b}</span>`).join('')}</div></div>
+<section id="familles"><div class="wrap"><div class="shead rv"><h2>Les familles.</h2><p>Faites glisser pour parcourir les neuf familles du catalogue.</p></div>
+ <div class="hscroll rv">${CATS.map(c=>`<a class="fcard" href="catalogue.html?c=${c.id}">${imgTag(c.img,c.n)}<span class="pst"><i></i>Parcourir</span><div><b>${c.c}</b><h3>${c.n}</h3></div></a>`).join('')}</div></div></section>
+<section style="padding-top:0"><div class="wrap"><div class="shead rv"><h2>À la une.</h2><a class="btn ghost" href="catalogue.html">Tout voir →</a></div>
+ <div class="bento rv"><a class="hero-p" href="produit.html?id=${hp.id}"><span class="pst"><i></i>Voir la fiche</span><span class="mono" style="color:var(--mut)">${hp.b} · ${hp.sku}</span><h3>Chargeur démarreur 600A</h3>${bigTag(hp)}<div class="row">${MODE==='shop'?`<b class="price" style="font-size:26px">${DA(hp.p)}</b>`:'<b class="price q">Prix sur devis</b>'}<span class="btn">Découvrir →</span></div></a>
+ ${['erh020','bey315','eco200','cap01'].map(id=>card(byId(id))).join('')}</div></div></section>
+<section style="padding-top:0"><div class="wrap"><div class="stats">${[[TOTAL_REF.toLocaleString('fr-FR').replace(/\u202f|\u00a0/g,' '),'références en catalogue'],['+20','ans d\'expertise'],['9','familles de produits'],['58','wilayas livrées']].map(s=>`<div class="stat rv"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('')}</div></div></section>
+<section id="pro" style="padding-top:0"><div class="wrap"><div class="shead rv"><h2>Achetez comme vous travaillez.</h2><p>Deux formules proposées. Basculez de l'une à l'autre avec le sélecteur en bas de l'écran.</p></div>${ways()}</div></section>
+<section id="contact" style="padding-top:0"><div class="wrap">${contact()}</div></section>`}
+document.getElementById('app').innerHTML=V==='b'?homeB():homeA();
+Chrome.init();
+const sel=document.getElementById('sel');
+function drawSel(t){if(!sel)return;const l=t==='all'?feat.map(byId):PRODUCTS.filter(p=>p.cat===t).slice(0,8);sel.innerHTML=l.map(card).join('')}
+drawSel('all');document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawSel(b.dataset.t)});
+const sl=document.getElementById('sl');if(sl){let i=0;const go=n=>{const im=sl.querySelectorAll('img'),d=sl.querySelectorAll('.dots button');if(!im.length)return;i=(n+im.length)%im.length;im.forEach((x,k)=>x.classList.toggle('on',k===i));d.forEach((x,k)=>x.classList.toggle('on',k===i))};sl.querySelectorAll('.dots button').forEach((b,k)=>b.onclick=()=>go(k));setInterval(()=>go(i+1),4500)}
+</script></body></html>

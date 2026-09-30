@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="icon" href="https://www.groupe-ntb.com/wp-content/uploads/2022/04/ntb-icon.png">
+<script>try{var v=new URLSearchParams(location.search).get('v')||JSON.parse(localStorage.getItem('ntb_v')||'"a"');document.documentElement.dataset.v=v}catch(e){document.documentElement.dataset.v='a'}</script>
+<title>Demande de devis — NTB</title>
+</head><body>
+<div id="hdr"></div>
+<main id="app" class="wrap"></main>
+<div id="ftr"></div>
+<div class="overlay" id="ov"><div class="ovbox" id="ovb"></div></div>
+<script src="data.js"></script><script src="core.js"></script>
+<script>
+
+const SHIP=w=>w==='retrait'?0:(w.includes('Alger')?500:1200);
+function lineImg(p){return imgTag(pimgSrc(p),p.n,'',p.b)}
+function demoFill(target){const d=[['erh020',1,null],['bey315',6,'Beige G315'],['colle-bois',4,'500 g']];d.forEach(x=>target.add(x[0],x[1],x[2]));location.reload()}
+
+const app=document.getElementById('app');
+function draw(){const c=Quote.get();
+ app.innerHTML=`<div class="phead"><nav class="crumb"><a href="index.html">Accueil</a> / Demande de devis</nav><h1>Demande de devis</h1><p style="color:var(--mut);max-width:60ch;margin-top:10px">Réservé aux professionnels, revendeurs et chantiers. Listez vos références et quantités : notre service commercial vous répond avec une offre chiffrée.</p></div>
+ ${MODE==='shop'?`<div class="modebar"><span><b>Vous êtes en mode e-commerce.</b> Cette page montre la formule « catalogue + devis ».</span><a class="btn" href="devis.html?mode=devis">Passer en mode devis</a></div>`:''}
+ <div class="co"><div style="display:flex;flex-direction:column;gap:18px">
+ <div class="panel"><h2>Vos références (${Quote.count()})</h2>
+  ${!c.length?`<div class="empty" style="padding:28px"><p>Aucune référence pour l'instant.</p><div style="display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap"><button class="btn" id="demo">Ajouter une sélection de démo</button><a class="btn ghost" href="catalogue.html?mode=devis">Parcourir le catalogue</a></div></div>`:
+  c.map((l,i)=>{const p=l.id.startsWith('libre:')?null:byId(l.id);return `<div class="qline">${p?lineImg(p):'<img alt="" src="'+FALLBACK('Libre')+'">'}<div><small class="note">${p?p.b+' · <span class="mono">'+p.sku+'</span>':'Référence libre'}</small><h4 style="font-size:15px">${p?`<a href="produit.html?id=${p.id}">${esc(p.n)}</a>`:esc(l.id.slice(6))}</h4>${l.v?`<small class="note">${esc(l.v)}</small>`:''}</div>
+  <div class="qty"><button data-i="${i}" data-d="-1" aria-label="Moins">−</button><input value="${l.q}" readonly aria-label="Quantité"><button data-i="${i}" data-d="1" aria-label="Plus">+</button></div><button class="rm" data-rm="${i}" style="border:0;background:none;color:var(--mut);cursor:pointer;text-decoration:underline">Retirer</button></div>`}).join('')}
+  <form id="lib" style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap"><input id="libv" placeholder="Référence introuvable ? Décrivez-la (ex. disque inox 230 mm)" style="flex:1;min-width:220px;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:12px"><button class="btn ghost">+ Ajouter</button></form></div>
+ <form class="panel" id="df"><h2>Vos informations</h2><div class="fgrid">
+  <label class="fld">Raison sociale<input required placeholder="Entreprise / commerce"></label><label class="fld">Nom du contact<input required></label>
+  <label class="fld">Téléphone<input type="tel" required placeholder="05 xx xx xx xx"></label><label class="fld">Email<input type="email" required></label>
+  <label class="fld"><span>Wilaya</span><select required>${wilOpts('16 — Alger')}</select></label>
+  <label class="fld"><span>Vous êtes</span><select required><option value="">Choisir</option><option>Revendeur / quincaillerie</option><option>Entreprise du BTP</option><option>Atelier / garage</option><option>Industrie</option><option>Administration</option><option>Particulier</option></select></label>
+  <label class="fld"><span>Délai souhaité</span><select><option>Dès que possible</option><option>Sous 1 semaine</option><option>Sous 1 mois</option><option>Projet à planifier</option></select></label>
+  <label class="fld">NIF / RC<input placeholder="facultatif"></label>
+  <label class="fld full">Précisions<textarea rows="4" placeholder="Conditions de livraison, marques préférées, usage…"></textarea></label>
+  <label class="upl full" id="upl">📎 Joindre une liste ou un bon de commande (PDF, Excel, photo)<input type="file" hidden id="uf"></label>
+  <label class="full" style="display:flex;gap:10px;align-items:center;font-size:14px"><input type="checkbox" checked style="accent-color:var(--acc)">Me recontacter aussi sur WhatsApp</label></div>
+  <button class="btn" style="margin-top:18px;width:100%;justify-content:center">Envoyer ma demande de devis →</button><p class="note" style="margin-top:8px">Démonstration : le formulaire n'envoie aucune donnée.</p></form></div>
+ <aside class="panel sum"><h2>Comment ça marche</h2><ol class="steps"><li>Ajoutez vos références depuis le catalogue, avec les quantités.</li><li>Envoyez la demande avec vos coordonnées.</li><li>Un commercial vous envoie une offre sous 24 h ouvrées.</li><li>Validez : livraison ou retrait à El Hamiz.</li></ol>
+  <div class="srow tot"><span>Références</span><span>${c.length}</span></div><div class="srow"><span>Quantité totale</span><b>${Quote.count()}</b></div>
+  <a class="btn ghost" href="${NTB.tel}" style="justify-content:center">${ICO.phone} ${NTB.phone}</a></aside></div>`;
+ const dm=document.getElementById('demo');if(dm)dm.onclick=()=>demoFill(Quote);
+ app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const c=Quote.get();const l=c[+b.dataset.i];l.q=Math.max(1,l.q+ +b.dataset.d);Quote.save(c);draw()});
+ app.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{const c=Quote.get();c.splice(+b.dataset.rm,1);Quote.save(c);draw()});
+ document.getElementById('lib').onsubmit=e=>{e.preventDefault();const v=document.getElementById('libv').value.trim();if(!v)return;const c=Quote.get();c.push({k:'libre:'+v,id:'libre:'+v,v:'',q:1});Quote.save(c);draw()};
+ const uf=document.getElementById('uf');uf.onchange=()=>{if(uf.files[0])document.getElementById('upl').firstChild.textContent='📎 '+uf.files[0].name+' — prêt à être joint '};
+ document.getElementById('df').onsubmit=e=>{e.preventDefault();if(!Quote.get().length){toast('<b>Ajoutez au moins une référence</b>');return}
+  const ref='DEV-'+new Date().getFullYear()+'-'+String(Math.floor(1000+Math.random()*8999));const n=Quote.get().length;Quote.save([]);
+  app.innerHTML=`<div class="done-box"><div class="okic">${ICO.check}</div><h1>Demande de devis envoyée.</h1><p style="font-size:18px">Référence <b class="mono">${ref}</b> · ${n} référence${n>1?'s':''}</p>
+  <div class="timeline"><div class="on">Demande reçue</div><div>Étude commerciale</div><div>Offre envoyée</div><div>Commande & livraison</div></div>
+  <p>Notre service commercial vous répond sous 24 h ouvrées par téléphone ou par email.</p><p class="note">(Simulation — aucune donnée envoyée.)</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn" href="catalogue.html">Retour au catalogue</a><a class="btn ghost" href="${NTB.wa}" target="_blank" rel="noopener">${ICO.wa} Suivre sur WhatsApp</a></div></div>`;scrollTo(0,0)};
+}
+Chrome.init();draw();
+</script></body></html>

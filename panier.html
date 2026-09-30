@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="icon" href="https://www.groupe-ntb.com/wp-content/uploads/2022/04/ntb-icon.png">
+<script>try{var v=new URLSearchParams(location.search).get('v')||JSON.parse(localStorage.getItem('ntb_v')||'"a"');document.documentElement.dataset.v=v}catch(e){document.documentElement.dataset.v='a'}</script>
+<title>Panier — NTB</title>
+</head><body>
+<div id="hdr"></div>
+<main id="app" class="wrap"></main>
+<div id="ftr"></div>
+<div class="overlay" id="ov"><div class="ovbox" id="ovb"></div></div>
+<script src="data.js"></script><script src="core.js"></script>
+<script>
+
+const SHIP=w=>w==='retrait'?0:(w.includes('Alger')?500:1200);
+function lineImg(p){return imgTag(pimgSrc(p),p.n,'',p.b)}
+function demoFill(target){const d=[['erh020',1,null],['bey315',6,'Beige G315'],['colle-bois',4,'500 g']];d.forEach(x=>target.add(x[0],x[1],x[2]));location.reload()}
+
+const app=document.getElementById('app');
+function draw(){const c=Cart.get();const sub=Cart.total();
+ app.innerHTML=`<div class="phead"><nav class="crumb"><a href="index.html">Accueil</a> / Panier</nav><h1>Votre panier</h1></div>
+ ${!c.length?`<div class="empty"><p style="font-size:18px">Votre panier est vide.</p><p class="note" style="margin-top:6px">Pour la présentation, vous pouvez le remplir en un clic.</p><div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn" id="demo">Remplir avec une sélection de démo</button><a class="btn ghost" href="catalogue.html">Parcourir le catalogue</a></div></div>`:
+ `<div class="co"><div class="panel"><div class="stepper"><span class="on">1 · Panier</span><span>2 · Livraison</span><span>3 · Paiement</span></div>
+  ${c.map((l,i)=>{const p=byId(l.id);return `<div class="line">${lineImg(p)}<div><small>${p.b} · <span class="mono">${p.sku}</span></small><h4><a href="produit.html?id=${p.id}">${esc(p.n)}</a></h4>${l.v?`<small>${p.vars.label} : ${esc(l.v)}</small>`:''}<div class="note">${DA(Cart.price(l))} / unité</div></div>
+  <div class="lr"><div class="qty"><button data-i="${i}" data-d="-1" aria-label="Moins">−</button><input value="${l.q}" readonly aria-label="Quantité"><button data-i="${i}" data-d="1" aria-label="Plus">+</button></div><b>${DA(Cart.price(l)*l.q)}</b><button class="rm" data-rm="${i}">Retirer</button></div></div>`}).join('')}
+  <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px"><a class="btn ghost" href="catalogue.html">← Continuer mes achats</a><button class="btn ghost" id="clr">Vider le panier</button></div></div>
+  <aside class="panel sum"><h2>Récapitulatif</h2><div class="srow"><span>Sous-total (${Cart.count()} articles)</span><b>${DA(sub)}</b></div><div class="srow"><span>Livraison</span><span class="note">calculée à l'étape suivante</span></div>
+  <label class="fld">Code promo<div style="display:flex;gap:8px"><input id="promo" placeholder="Ex. PRO10" style="flex:1"><button class="btn ghost" id="ap">OK</button></div></label><div class="note" id="pm"></div>
+  <div class="srow tot"><span>Total TTC</span><span id="tt">${DA(sub)}</span></div>
+  <a class="btn" href="paiement.html" style="justify-content:center"><span class="pst" style="font-size:0"><i style="background:#fff"></i></span>Passer la commande →</a>
+  <div class="pays" style="display:flex;gap:6px;flex-wrap:wrap"><span class="cardlogo cib">CIB</span><span class="cardlogo edh">Edahabia</span><span class="cardlogo cod">À la livraison</span></div></aside></div>`}`;
+ const dm=document.getElementById('demo');if(dm)dm.onclick=()=>demoFill(Cart);
+ app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const c=Cart.get();const l=c[+b.dataset.i];l.q=Math.max(1,l.q+ +b.dataset.d);Cart.save(c);draw()});
+ app.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{const c=Cart.get();c.splice(+b.dataset.rm,1);Cart.save(c);draw()});
+ const cl=document.getElementById('clr');if(cl)cl.onclick=()=>{Cart.save([]);draw()};
+ const ap=document.getElementById('ap');if(ap)ap.onclick=()=>{const v=document.getElementById('promo').value.trim().toUpperCase();const pm=document.getElementById('pm');if(v==='PRO10'){pm.textContent='Code PRO10 appliqué : −10 % (démo)';document.getElementById('tt').textContent=DA(Math.round(Cart.total()*.9))}else pm.textContent='Code inconnu. Essayez PRO10 pour la démo.'};
+}
+Chrome.init();draw();
+</script></body></html>

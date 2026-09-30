@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="icon" href="https://www.groupe-ntb.com/wp-content/uploads/2022/04/ntb-icon.png">
+<script>try{var v=new URLSearchParams(location.search).get('v')||JSON.parse(localStorage.getItem('ntb_v')||'"a"');document.documentElement.dataset.v=v}catch(e){document.documentElement.dataset.v='a'}</script>
+<title>Fiche produit — NTB</title>
+</head><body>
+<div id="hdr"></div>
+<main id="app" class="wrap"></main>
+<div id="ftr"></div>
+<script src="data.js"></script><script src="core.js"></script>
+<script>
+
+const p=byId(qp.get('id'))||PRODUCTS[0],c=catOf(p.cat);
+document.title=p.n+' — NTB';
+let variant=p.vars?p.vars.o[0][0]:null,qty=1;
+const priceNow=()=>p.vars?p.vars.o.find(o=>o[0]===variant)[1]:p.p;
+const imgs=[p.big||pimgSrc(p),c.img].filter((x,i,a)=>a.indexOf(x)===i);
+const rel=PRODUCTS.filter(x=>x.cat===p.cat&&x.id!==p.id).concat(PRODUCTS.filter(x=>x.cat!==p.cat)).slice(0,4);
+document.getElementById('app').innerHTML=`
+<nav class="crumb"><a href="index.html">Accueil</a> / <a href="catalogue.html">Catalogue</a> / <a href="catalogue.html?c=${c.id}">${c.n}</a> / ${esc(p.n)}</nav>
+<div class="pd">
+ <div class="gal"><div class="gmain" id="gm">${bigTag(p)}</div>
+  <div class="gthumbs">${imgs.map((s,i)=>`<button class="${i?'':'on'}" data-s="${s}" aria-label="Visuel ${i+1}">${imgTag(s,'')}</button>`).join('')}</div>
+  ${p.img?'':'<p class="note" style="margin-top:10px">Photo produit non disponible sur le site actuel : visuel de famille affiché. Nous réaliserons les photos produits.</p>'}</div>
+ <div class="pinfo">
+  <div class="brand"><b>${p.b}</b><span class="mono">Réf. ${p.sku}</span><span>·</span><a href="catalogue.html?c=${c.id}">${c.n}</a></div>
+  <h1>${esc(p.n)}</h1>
+  <p style="font-size:17px;color:var(--mut)">${p.d}</p>
+  <div class="hl">${p.hi.map(h=>`<span>${ICO.check}${h}</span>`).join('')}</div>
+  <div class="buy">
+   ${MODE==='shop'?`<div class="bprice"><b id="pp">${DA(priceNow())}</b><small>TTC · prix indicatif</small></div><div class="stock"><i></i>En stock au magasin d'El Hamiz</div>`:`<div class="bprice"><b style="font-size:24px">Prix sur devis</b><small>Tarifs professionnels selon quantités</small></div>`}
+   ${p.vars?`<div><div style="font-weight:700;font-size:14px;margin-bottom:8px">${p.vars.label} : <span id="vl">${variant}</span></div><div class="vchips">${p.vars.o.map((o,i)=>`<button class="${i?'':'on'}" data-v="${esc(o[0])}">${o[0]}</button>`).join('')}</div></div>`:''}
+   <div class="brow"><div class="qty"><button id="qm" aria-label="Moins">−</button><input id="qv" value="1" inputmode="numeric" aria-label="Quantité"><button id="qp" aria-label="Plus">+</button></div>
+    <button class="btn" id="add">${MODE==='shop'?ICO.cart+' Ajouter au panier':ICO.doc+' Ajouter à ma demande de devis'}</button></div>
+   ${MODE==='shop'?`<button class="btn ghost" id="buy" style="justify-content:center">Acheter maintenant →</button>`:`<a class="btn ghost" style="justify-content:center" href="${NTB.wa}" target="_blank" rel="noopener">${ICO.wa} Demander le prix sur WhatsApp</a>`}
+   <div class="assur"><div>${ICO.truck}<span>Livraison Alger et 58 wilayas, ou retrait au magasin</span></div><div>${ICO.check}<span>${MODE==='shop'?'Paiement CIB, Edahabia ou à la livraison':'Réponse commerciale sous 24 h ouvrées'}</span></div><div>${ICO.phone}<span>Conseil technique : ${NTB.phone}</span></div></div>
+  </div></div></div>
+<div class="ptabs"><div class="tnav" id="tnav"><button class="on" data-t="t1">Description</button><button data-t="t2">Caractéristiques</button><button data-t="t3">Utilisation</button><button data-t="t4">Livraison & retours</button><button data-t="t5">Documents</button></div>
+ <div class="tpane on" id="t1"><p>${p.d}</p><p style="margin-top:14px">Distribué par NTB — New Tools Bey, fournisseur d'outillage professionnel, de peinture et de quincaillerie depuis plus de 20 ans. Nos équipes vous conseillent sur le choix de la référence adaptée à votre usage, en magasin à El Hamiz ou par téléphone.</p></div>
+ <div class="tpane" id="t2"><table class="specs">${[['Marque',p.b],['Référence',p.sku],['Famille',c.n],...p.sp].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table><p class="note" style="margin-top:12px">Caractéristiques issues de la désignation du produit : à compléter avec la fiche fournisseur.</p></div>
+ <div class="tpane" id="t3"><ol class="steps">${p.use.map(u=>`<li>${u}</li>`).join('')}</ol><p class="note" style="margin-top:14px">Toujours respecter la notice du fabricant et porter les équipements de protection adaptés.</p></div>
+ <div class="tpane" id="t4"><table class="specs"><tr><td>Alger</td><td>Livraison sous 24 à 48 h</td></tr><tr><td>Autres wilayas</td><td>2 à 5 jours ouvrés via transporteur</td></tr><tr><td>Retrait</td><td>Gratuit au magasin d'El Hamiz</td></tr><tr><td>Retours</td><td>Produit neuf, dans son emballage, sous 7 jours</td></tr></table><p class="note" style="margin-top:12px">Conditions données pour la maquette, à valider avec NTB.</p></div>
+ <div class="tpane" id="t5"><div class="docs"><a class="doc" onclick="window.print()">${ICO.doc}<span>Fiche produit (PDF)<small>Imprimer ou enregistrer en PDF</small></span></a><a class="doc" href="catalogue.html?c=${c.id}">${ICO.doc}<span>Catalogue ${c.n}<small>${c.c} références</small></span></a></div></div>
+</div>
+<section style="padding-top:40px"><div class="shead"><h2 style="font-size:clamp(26px,3vw,40px)">Vous aimerez aussi</h2></div><div class="grid">${rel.map(card).join('')}</div></section>
+<div class="sticky-buy" id="sb"><span><b style="display:block;font-size:14px;line-height:1.2">${esc(p.n.split(' — ')[0])}</b><span class="note">${MODE==='shop'?DA(priceNow()):'Prix sur devis'}</span></span><button class="btn" id="add2">${MODE==='shop'?'Ajouter':'Au devis'}</button></div>`;
+Chrome.init();
+const gm=document.getElementById('gm');
+document.querySelectorAll('.gthumbs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.gthumbs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');gm.querySelector('img').src=b.dataset.s});
+gm.onclick=()=>gm.classList.toggle('z');gm.onmousemove=e=>{const r=gm.getBoundingClientRect();gm.style.setProperty('--zx',((e.clientX-r.left)/r.width*100)+'%');gm.style.setProperty('--zy',((e.clientY-r.top)/r.height*100)+'%')};
+document.querySelectorAll('.vchips button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.vchips button').forEach(x=>x.classList.remove('on'));b.classList.add('on');variant=b.dataset.v;document.getElementById('vl').textContent=variant;const pp=document.getElementById('pp');if(pp)pp.textContent=DA(priceNow())});
+const qv=document.getElementById('qv');const setQ=n=>{qty=Math.max(1,Math.min(999,n|0||1));qv.value=qty};
+document.getElementById('qm').onclick=()=>setQ(qty-1);document.getElementById('qp').onclick=()=>setQ(qty+1);qv.onchange=()=>setQ(+qv.value);
+document.getElementById('add').onclick=()=>addItem(p.id,qty,variant);document.getElementById('add2').onclick=()=>addItem(p.id,qty,variant);
+const bu=document.getElementById('buy');if(bu)bu.onclick=()=>{Cart.add(p.id,qty,variant);location.href='paiement.html'};
+document.querySelectorAll('#tnav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tnav button').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.tpane').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.t).classList.add('on')});
+const sb=document.getElementById('sb'),ab=document.getElementById('add');addEventListener('scroll',()=>{const r=ab.getBoundingClientRect();sb.classList.toggle('on',r.bottom<0)},{passive:true});
+
+</script></body></html>

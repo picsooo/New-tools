@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="icon" href="https://www.groupe-ntb.com/wp-content/uploads/2022/04/ntb-icon.png">
+<script>try{var v=new URLSearchParams(location.search).get('v')||JSON.parse(localStorage.getItem('ntb_v')||'"a"');document.documentElement.dataset.v=v}catch(e){document.documentElement.dataset.v='a'}</script>
+<title>Paiement — NTB</title>
+</head><body>
+<div id="hdr"></div>
+<main id="app" class="wrap"></main>
+<div id="ftr"></div>
+<div class="overlay" id="ov"><div class="ovbox" id="ovb"></div></div>
+<script src="data.js"></script><script src="core.js"></script>
+<script>
+
+const SHIP=w=>w==='retrait'?0:(w.includes('Alger')?500:1200);
+function lineImg(p){return imgTag(pimgSrc(p),p.n,'',p.b)}
+function demoFill(target){const d=[['erh020',1,null],['bey315',6,'Beige G315'],['colle-bois',4,'500 g']];d.forEach(x=>target.add(x[0],x[1],x[2]));location.reload()}
+
+const app=document.getElementById('app');let step=1,ship='',payM='cib',info={};
+if(MODE==='devis'){location.replace('devis.html')}
+function totals(){const sub=Cart.total();const s=ship?SHIP(ship):0;const free=sub>=30000&&ship&&ship!=='retrait';return {sub,s:free?0:s,free,tot:sub+(free?0:s)}}
+function summary(){const t=totals();return `<aside class="panel sum"><h2>Votre commande</h2>${Cart.get().map(l=>{const p=byId(l.id);return `<div class="srow" style="font-size:14px;gap:10px"><span>${esc(p.n.split(' — ')[0])}${l.v?' · '+esc(l.v):''} × ${l.q}</span><b style="white-space:nowrap">${DA(Cart.price(l)*l.q)}</b></div>`}).join('')}
+ <div class="srow" style="border-top:1px solid var(--line);padding-top:10px"><span>Sous-total</span><b>${DA(t.sub)}</b></div><div class="srow"><span>Livraison</span><b>${!ship?'—':t.s===0?(ship==='retrait'?'Retrait gratuit':'Offerte'):DA(t.s)}</b></div>
+ <div class="srow tot"><span>Total TTC</span><span>${DA(t.tot)}</span></div><p class="note">Livraison offerte dès 30 000 DA (hors retrait). Conditions de démonstration.</p></aside>`}
+function draw(){
+ if(!Cart.get().length){app.innerHTML=`<div class="phead"><nav class="crumb"><a href="index.html">Accueil</a> / Paiement</nav><h1>Paiement</h1></div><div class="empty"><p style="font-size:18px">Votre panier est vide.</p><button class="btn" id="demo" style="margin-top:14px">Remplir avec une sélection de démo</button></div>`;document.getElementById('demo').onclick=()=>demoFill(Cart);return}
+ const st=`<div class="stepper"><span class="done">1 · Panier ✓</span><span class="${step===1?'on':'done'}">2 · Livraison${step>1?' ✓':''}</span><span class="${step===2?'on':''}">3 · Paiement</span></div>`;
+ if(step===1){app.innerHTML=`<div class="phead"><nav class="crumb"><a href="index.html">Accueil</a> / <a href="panier.html">Panier</a> / Livraison</nav><h1>Livraison</h1></div><div class="co"><form class="panel" id="f1">${st}<h2>Vos coordonnées</h2>
+  <div class="fgrid"><label class="fld">Nom et prénom<input name="nom" required value="${esc(info.nom||'')}"></label><label class="fld">Téléphone<input name="tel" type="tel" required placeholder="05 xx xx xx xx" value="${esc(info.tel||'')}"></label>
+  <label class="fld full">Email<input name="email" type="email" placeholder="facultatif" value="${esc(info.email||'')}"></label></div>
+  <h2 style="margin-top:22px">Mode de livraison</h2><div class="pays">
+  <label class="pay-o${ship==='retrait'?' on':''}"><input type="radio" name="sh" value="retrait"${ship==='retrait'?' checked':''}><span><b>Retrait au magasin — El Hamiz</b><small>Gratuit · prêt sous 24 h</small></span><b>0 DA</b></label>
+  <label class="pay-o${ship&&ship!=='retrait'?' on':''}"><input type="radio" name="sh" value="dom"${ship&&ship!=='retrait'?' checked':''}><span><b>Livraison à domicile ou sur chantier</b><small>Alger 24–48 h · autres wilayas 2 à 5 jours</small></span><b>dès 500 DA</b></label></div>
+  <div class="fgrid" id="adr" style="margin-top:14px;${ship&&ship!=='retrait'?'':'display:none'}"><label class="fld"><span>Wilaya</span><select name="wil" id="wil">${wilOpts(ship&&ship!=='retrait'?ship:'')}</select></label><label class="fld">Commune<input name="com" value="${esc(info.com||'')}"></label><label class="fld full">Adresse<input name="adr" value="${esc(info.adr||'')}"></label></div>
+  <div style="display:flex;justify-content:space-between;gap:10px;margin-top:22px;flex-wrap:wrap"><a class="btn ghost" href="panier.html">← Panier</a><button class="btn">Continuer vers le paiement →</button></div></form>${summary()}</div>`;
+  const f=document.getElementById('f1');f.querySelectorAll('[name=sh]').forEach(r=>r.onchange=()=>{f.querySelectorAll('.pay-o').forEach(x=>x.classList.remove('on'));r.closest('.pay-o').classList.add('on');document.getElementById('adr').style.display=r.value==='dom'?'':'none';ship=r.value==='retrait'?'retrait':(document.getElementById('wil').value||'16 — Alger');if(r.value==='dom'&&!document.getElementById('wil').value)document.getElementById('wil').value='16 — Alger';refreshSum()});
+  document.getElementById('wil').onchange=e=>{ship=e.target.value||'16 — Alger';refreshSum()};
+  f.onsubmit=e=>{e.preventDefault();const fd=new FormData(f);info=Object.fromEntries(fd);if(!ship){toast('<b>Choisissez un mode de livraison</b>');return}step=2;draw();scrollTo(0,0)};return}
+ app.innerHTML=`<div class="phead"><nav class="crumb"><a href="index.html">Accueil</a> / <a href="panier.html">Panier</a> / Paiement</nav><h1>Paiement</h1></div><div class="co"><div class="panel">${st}<h2>Moyen de paiement</h2>
+ <div class="pays">
+  <label class="pay-o${payM==='cib'?' on':''}"><input type="radio" name="pm" value="cib"${payM==='cib'?' checked':''}><span><b>Carte CIB</b><small>Carte interbancaire — paiement sécurisé SATIM</small></span><span class="cardlogo cib">CIB</span></label>
+  <label class="pay-o${payM==='edh'?' on':''}"><input type="radio" name="pm" value="edh"${payM==='edh'?' checked':''}><span><b>Carte Edahabia</b><small>Carte Algérie Poste — paiement sécurisé</small></span><span class="cardlogo edh">Edahabia</span></label>
+  <label class="pay-o${payM==='cod'?' on':''}"><input type="radio" name="pm" value="cod"${payM==='cod'?' checked':''}><span><b>Paiement à la livraison</b><small>En espèces à la réception ou au retrait</small></span><span class="cardlogo cod">Cash</span></label></div>
+ <div id="cardf" style="margin-top:18px;${payM==='cod'?'display:none':''}">
+  <div class="cardviz ${payM==='edh'?'edh':'cib'}" id="cv"><div class="top"><span id="cvt">${payM==='edh'?'EDAHABIA':'CIB'}</span><span class="chip-ic"></span></div><div class="cn" id="cvn">•••• •••• •••• ••••</div><div class="bot"><span id="cvh">NOM DU PORTEUR</span><span id="cve">MM/AA</span></div></div>
+  <div class="fgrid"><label class="fld full">Numéro de carte<input id="cn" inputmode="numeric" maxlength="19" placeholder="6280 0000 0000 0000"></label><label class="fld">Nom du porteur<input id="ch" placeholder="Comme sur la carte"></label>
+  <div class="fgrid" style="gap:10px"><label class="fld">Expiration<input id="ce" maxlength="5" placeholder="MM/AA"></label><label class="fld">CVV2<input id="cc" maxlength="3" inputmode="numeric" placeholder="123"></label></div></div>
+  <p class="secure" style="margin-top:12px">🔒 Démonstration : aucune donnée n'est envoyée. En production, le paiement passe par la plateforme sécurisée SATIM / Algérie Poste.</p></div>
+ <div id="codf" style="margin-top:18px;${payM==='cod'?'':'display:none'}" class="note">Vous réglez ${DA(totals().tot)} ${ship==='retrait'?'au retrait en magasin':'au livreur, à la réception de votre commande'}. Un conseiller vous appelle pour confirmer.</div>
+ <label style="display:flex;gap:10px;align-items:flex-start;margin-top:18px;font-size:14px"><input type="checkbox" id="cgv" checked style="margin-top:4px;accent-color:var(--acc)">J'accepte les conditions générales de vente.</label>
+ <div style="display:flex;justify-content:space-between;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn ghost" id="back">← Livraison</button><button class="btn" id="pay">${payM==='cod'?'Confirmer la commande':'Payer '+DA(totals().tot)} →</button></div></div>${summary()}</div>`;
+ app.querySelectorAll('[name=pm]').forEach(r=>r.onchange=()=>{payM=r.value;draw()});
+ document.getElementById('back').onclick=()=>{step=1;draw()};
+ const cn=document.getElementById('cn');if(cn){cn.oninput=()=>{let v=cn.value.replace(/\D/g,'').slice(0,16);cn.value=v.replace(/(.{4})/g,'$1 ').trim();document.getElementById('cvn').textContent=(v+'•'.repeat(16-v.length)).replace(/(.{4})/g,'$1 ').trim()};
+  document.getElementById('ch').oninput=e=>document.getElementById('cvh').textContent=e.target.value.toUpperCase()||'NOM DU PORTEUR';
+  const ce=document.getElementById('ce');ce.oninput=()=>{let v=ce.value.replace(/\D/g,'').slice(0,4);ce.value=v.length>2?v.slice(0,2)+'/'+v.slice(2):v;document.getElementById('cve').textContent=ce.value||'MM/AA'}}
+ document.getElementById('pay').onclick=()=>{if(!document.getElementById('cgv').checked){toast('<b>Veuillez accepter les CGV</b>');return}
+  if(payM!=='cod'){const n=(document.getElementById('cn').value||'').replace(/\s/g,'');if(n.length<16){toast('<b>Numéro de carte incomplet</b><span>Démo : saisissez 16 chiffres quelconques.</span>');return}otp();}else success()}
+}
+function refreshSum(){const s=app.querySelector('.sum');if(s)s.outerHTML=summary()}
+const ov=document.getElementById('ov'),ovb=document.getElementById('ovb');
+function otp(){ov.classList.add('on');ovb.innerHTML=`<div class="spin"></div><h3>Connexion à la plateforme de paiement sécurisée…</h3><p class="note">${payM==='edh'?'Algérie Poste — Edahabia':'SATIM — carte CIB'}</p>`;
+ setTimeout(()=>{ovb.innerHTML=`<span class="cardlogo ${payM==='edh'?'edh':'cib'}">${payM==='edh'?'Edahabia':'CIB'}</span><h3>Code de confirmation</h3><p class="note">Un code à 6 chiffres a été envoyé par SMS. Démo : saisissez n'importe quel code.</p><input id="otp" maxlength="6" inputmode="numeric" style="text-align:center;font-size:26px;letter-spacing:.4em;padding:12px;border:1px solid var(--line);border-radius:var(--r);width:220px;background:var(--bg)"><button class="btn" id="otpb" style="width:100%;justify-content:center">Valider le paiement</button><button class="rm" style="border:0;background:none;color:var(--mut);cursor:pointer" onclick="ov.classList.remove('on')">Annuler</button>`;
+  document.getElementById('otp').focus();document.getElementById('otpb').onclick=()=>{ovb.innerHTML='<div class="spin"></div><h3>Paiement en cours de validation…</h3>';setTimeout(()=>{ov.classList.remove('on');success()},1400)}},1500)}
+function success(){const t=totals();const n='NTB-'+new Date().getFullYear()+'-'+String(Math.floor(10000+Math.random()*89999));const items=Cart.get();Cart.save([]);
+ app.innerHTML=`<div class="done-box"><div class="okic">${ICO.check}</div><h1>Merci, commande confirmée.</h1><p style="font-size:18px">Commande <b class="mono">${n}</b> · ${DA(t.tot)} · ${payM==='cod'?'paiement à la livraison':payM==='edh'?'payée par Edahabia':'payée par carte CIB'}</p>
+ <div class="timeline"><div class="on">Commande reçue</div><div class="${payM==='cod'?'':'on'}">Paiement ${payM==='cod'?'à la livraison':'validé'}</div><div>Préparation</div><div>${ship==='retrait'?'Prête au retrait':'Livraison'}</div></div>
+ <div class="panel" style="width:100%;text-align:left">${items.map(l=>{const p=byId(l.id);return `<div class="srow" style="padding:6px 0"><span>${esc(p.n)}${l.v?' · '+esc(l.v):''} × ${l.q}</span><b>${DA(Cart.price(l)*l.q)}</b></div>`}).join('')}</div>
+ <p class="note">Un SMS de confirmation est envoyé au ${esc(info.tel||'numéro indiqué')}. (Simulation — aucune commande réelle.)</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn" href="catalogue.html">Continuer mes achats</a><a class="btn ghost" href="index.html">Accueil</a></div></div>`;scrollTo(0,0)}
+Chrome.init();draw();
+</script></body></html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Big+Shoulders+Display:wght@700;800;900&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"><link rel="icon" href="https://www.groupe-ntb.com/wp-content/uploads/2022/04/ntb-icon.png">
+<script>try{var v=new URLSearchParams(location.search).get('v')||JSON.parse(localStorage.getItem('ntb_v')||'"a"');document.documentElement.dataset.v=v}catch(e){document.documentElement.dataset.v='a'}</script>
+<title>Catalogue — NTB New Tools Bey</title>
+</head><body>
+<div id="hdr"></div>
+<main id="app" class="wrap"></main>
+<div id="ftr"></div>
+<script src="data.js"></script><script src="core.js"></script>
+<script>
+
+let fc=qp.get('c')||'all',fb='all',q=(qp.get('q')||'').trim().toLowerCase(),sort='pert';
+const app=document.getElementById('app');
+app.innerHTML=`<div class="phead"><nav class="crumb"><a href="index.html">Accueil</a> / Catalogue</nav><h1 id="ptitle">Catalogue</h1></div>
+<div class="modebar"><span>${MODE==='shop'?'<b>Mode e-commerce :</b> prix affichés, ajout au panier et paiement en ligne.':'<b>Mode catalogue + devis :</b> sans prix, ajoutez des références à votre demande de devis.'}</span><span class="note">Prix et stocks indicatifs — maquette</span></div>
+<div class="fchips" id="fchips"></div>
+<div class="cat-l"><aside class="side"><div><h4>Familles</h4><div id="fcat"></div></div><div><h4>Marques</h4><div id="fbr"></div></div></aside>
+<div><div class="bar"><span id="cnt"></span><label>Trier : <select id="sort"><option value="pert">Pertinence</option><option value="asc">Prix croissant</option><option value="desc">Prix décroissant</option><option value="az">Nom A → Z</option></select></label></div><div class="grid" id="list"></div></div></div>`;
+Chrome.init();
+const brands=[...new Set(PRODUCTS.map(p=>p.b))];
+function draw(){
+ const cc=c=>PRODUCTS.filter(p=>p.cat===c).length;
+ document.getElementById('fcat').innerHTML=[`<button class="opt${fc==='all'?' on':''}" data-c="all">Toutes <small>${PRODUCTS.length}</small></button>`,...CATS.filter(c=>cc(c.id)).map(c=>`<button class="opt${fc===c.id?' on':''}" data-c="${c.id}">${c.n}<small>${cc(c.id)}</small></button>`)].join('');
+ document.getElementById('fbr').innerHTML=[`<button class="opt${fb==='all'?' on':''}" data-b="all">Toutes</button>`,...brands.map(b=>`<button class="opt${fb===b?' on':''}" data-b="${b}">${b}</button>`)].join('');
+ document.getElementById('fchips').innerHTML=[`<button class="${fc==='all'?'on':''}" data-c="all">Toutes</button>`,...CATS.filter(c=>cc(c.id)).map(c=>`<button class="${fc===c.id?'on':''}" data-c="${c.id}">${c.n}</button>`)].join('');
+ let l=PRODUCTS.filter(p=>(fc==='all'||p.cat===fc)&&(fb==='all'||p.b===fb)&&(!q||(p.n+' '+p.b+' '+p.sku+' '+catOf(p.cat).n).toLowerCase().includes(q)));
+ if(sort==='asc')l.sort((a,b)=>a.p-b.p);if(sort==='desc')l.sort((a,b)=>b.p-a.p);if(sort==='az')l.sort((a,b)=>a.n.localeCompare(b.n));
+ document.getElementById('ptitle').textContent=q?`Résultats pour « ${qp.get('q')} »`:(fc==='all'?'Catalogue':catOf(fc).n);
+ document.getElementById('cnt').textContent=`${l.length} produit${l.length>1?'s':''} présentés${fc!=='all'?' · '+catOf(fc).c+' références dans cette famille chez NTB':' · '+TOTAL_REF+' références au total chez NTB'}`;
+ document.getElementById('list').innerHTML=l.length?l.map(card).join(''):`<div class="empty" style="grid-column:1/-1">Aucun produit pour cette recherche dans la maquette.<br><a class="btn" style="margin-top:14px" href="catalogue.html">Réinitialiser</a></div>`;
+ document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{fc=b.dataset.c;draw()});
+ document.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{fb=b.dataset.b;draw()});
+}
+document.getElementById('sort').onchange=e=>{sort=e.target.value;draw()};
+draw();
+</script></body></html>
