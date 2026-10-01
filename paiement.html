@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="style.css"><link rel="icon" href="https://www.groupe-ntb.com/wp-content/uploads/2022/04/ntb-icon.png">
 <script>try{var v=new URLSearchParams(location.search).get('v')||JSON.parse(localStorage.getItem('ntb_v')||'"a"');document.documentElement.dataset.v=v}catch(e){document.documentElement.dataset.v='a'}</script>
 <title>Paiement — NTB</title>
-</head><body>
+<meta name="robots" content="noindex, nofollow"><!--wm-demo--></head><body>
 <div id="hdr"></div>
 <main id="app" class="wrap"></main>
 <div id="ftr"></div>
@@ -70,4 +70,5 @@ function success(){const t=totals();const n='NTB-'+new Date().getFullYear()+'-'+
  <div class="panel" style="width:100%;text-align:left">${items.map(l=>{const p=byId(l.id);return `<div class="srow" style="padding:6px 0"><span>${esc(p.n)}${l.v?' · '+esc(l.v):''} × ${l.q}</span><b>${DA(Cart.price(l)*l.q)}</b></div>`}).join('')}</div>
  <p class="note">Un SMS de confirmation est envoyé au ${esc(info.tel||'numéro indiqué')}. (Simulation — aucune commande réelle.)</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><a class="btn" href="catalogue.html">Continuer mes achats</a><a class="btn ghost" href="index.html">Accueil</a></div></div>`;scrollTo(0,0)}
 Chrome.init();draw();
-</script></body></html>
+</script><div id="wm-demo" role="note" style="position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:rgba(10,14,30,.92);color:#fff;font:600 12px/1.3 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center;padding:7px 12px calc(7px + env(safe-area-inset-bottom,0px));letter-spacing:.01em">Maquette de démonstration réalisée par <a href="https://webminds.dz" style="color:#ffcf5a;text-decoration:underline" target="_blank" rel="noopener">Webminds</a> · Proposition non officielle, aucun formulaire n'est enregistré</div>
+<script>(function(){function f(){var b=document.getElementById('wm-demo');if(!b)return;var h=b.offsetHeight;document.body.style.paddingBottom=(parseFloat(getComputedStyle(document.body).paddingBottom)||0)+h+'px';document.querySelectorAll('body *').forEach(function(e){if(e===b||b.contains(e))return;var s=getComputedStyle(e);if(s.position!=='fixed')return;var bt=parseFloat(s.bottom);if(!isNaN(bt)&&bt<120&&s.bottom!=='auto'&&e.offsetHeight<window.innerHeight*.6){e.style.bottom=(bt+h)+'px'}})}if(document.readyState==='complete')f();else addEventListener('load',f)})();</script><!--wm-demo--></body></html>

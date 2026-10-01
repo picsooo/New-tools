@@ -7,7 +7,7 @@
 <script>try{var v=new URLSearchParams(location.search).get('v')||JSON.parse(localStorage.getItem('ntb_v')||'"a"');document.documentElement.dataset.v=v}catch(e){document.documentElement.dataset.v='a'}</script>
 <title>NTB — New Tools Bey · Outillage professionnel, peinture et quincaillerie</title>
 <meta name="description" content="NTB, fournisseur et distributeur d'outillage professionnel, de peinture et de quincaillerie à El Hamiz, Alger. Plus de 20 ans d'expertise.">
-</head><body>
+<meta name="robots" content="noindex, nofollow"><!--wm-demo--></head><body>
 <div id="hdr"></div>
 <main id="app"></main>
 <div id="ftr"></div>
@@ -70,4 +70,5 @@ const sel=document.getElementById('sel');
 function drawSel(t){if(!sel)return;const l=t==='all'?feat.map(byId):PRODUCTS.filter(p=>p.cat===t).slice(0,8);sel.innerHTML=l.map(card).join('')}
 drawSel('all');document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawSel(b.dataset.t)});
 const sl=document.getElementById('sl');if(sl){let i=0;const go=n=>{const im=sl.querySelectorAll('img'),d=sl.querySelectorAll('.dots button');if(!im.length)return;i=(n+im.length)%im.length;im.forEach((x,k)=>x.classList.toggle('on',k===i));d.forEach((x,k)=>x.classList.toggle('on',k===i))};sl.querySelectorAll('.dots button').forEach((b,k)=>b.onclick=()=>go(k));setInterval(()=>go(i+1),4500)}
-</script></body></html>
+</script><div id="wm-demo" role="note" style="position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:rgba(10,14,30,.92);color:#fff;font:600 12px/1.3 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center;padding:7px 12px calc(7px + env(safe-area-inset-bottom,0px));letter-spacing:.01em">Maquette de démonstration réalisée par <a href="https://webminds.dz" style="color:#ffcf5a;text-decoration:underline" target="_blank" rel="noopener">Webminds</a> · Proposition non officielle, aucun formulaire n'est enregistré</div>
+<script>(function(){function f(){var b=document.getElementById('wm-demo');if(!b)return;var h=b.offsetHeight;document.body.style.paddingBottom=(parseFloat(getComputedStyle(document.body).paddingBottom)||0)+h+'px';document.querySelectorAll('body *').forEach(function(e){if(e===b||b.contains(e))return;var s=getComputedStyle(e);if(s.position!=='fixed')return;var bt=parseFloat(s.bottom);if(!isNaN(bt)&&bt<120&&s.bottom!=='auto'&&e.offsetHeight<window.innerHeight*.6){e.style.bottom=(bt+h)+'px'}})}if(document.readyState==='complete')f();else addEventListener('load',f)})();</script><!--wm-demo--></body></html>
